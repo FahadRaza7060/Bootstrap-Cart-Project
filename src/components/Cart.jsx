@@ -20,8 +20,8 @@ const Cart = () => {
 
         fetch(url).then(response => response.json()).then(data => {
 
-            console.log('data', data);
-            console.log('products array', data.products);
+            // console.log('data', data);
+            // console.log('products array', data.products);
 
             setProducts(data.products);
             productCategories(data.products);
@@ -85,10 +85,53 @@ const Cart = () => {
         if (!isItemExist) {
             setCartItems([...cartItems, { ...product, quantity: 1 }])
         } else {
-            cartItems[index].quantity++;
+
+            cartItems[val].quantity++;
 
             setCartItems([...cartItems]);
         }
+    }
+
+    function showTotalQuantity() {
+        let data = 0;
+        for (let i = 0; i < cartItems.length; i++) {
+            data += cartItems[i].quantity;
+        }
+
+        return data;
+    }
+
+    const removeFromCart = (id) => {
+        setCartItems((prevItems) =>
+            prevItems.filter((item) => item.id !== id));
+    }
+
+    const increaseQuantity = (id) => {
+
+        cartItems.map((item, index) => {
+
+            if (item.id == id) {
+            cartItems[index].quantity++;
+            setCartItems([...cartItems]);
+            }
+        })
+    }
+
+    const decreaseQuantity = (id) => {
+        cartItems.map((item, index) => {
+
+            if (item.id == id) {
+            cartItems[index].quantity--;
+
+            if(cartItems[index].quantity === 0)
+            {
+                removeFromCart(id);
+            } else {
+                setCartItems([...cartItems]);
+            }
+            
+            }
+        })
     }
 
     useEffect(() => {
@@ -139,34 +182,95 @@ const Cart = () => {
                     <button
                         className="cart-button"
                         type="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#exampleModal"
+                        data-toggle="modal"
+                        data-target="#exampleModal"
                     >
                         <span className="cart-icon">🛒</span>
                         <span className="cart-text">Cart</span>
-                        <span className="cart-count"> {cartItems.length} </span>
+                        <span className="cart-count"> {showTotalQuantity()} </span>
                     </button>
-                </div>
 
-                {/* Model show */}
-                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel"> Your Cart </h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                ...
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal"> Close </button>
-                                <button type="button" class="btn btn-primary"> Checkout </button>
+                    {/* modal */}
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel"> Cart Items </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body">
+                                    <ul className="list-group shadow-sm">
+                                        {cartItems.length == 0 ? (
+                                            <li className="list-group-item text-center text-muted p-3">
+                                                Your cart is empty!
+                                            </li>
+                                        ) : (
+                                            cartItems.map((item) => (
+                                                <li
+                                                    key={item.id}
+                                                    className="list-group-item d-flex justify-content-between align-items-center p-3"
+                                                >
+                                                    <div className="d-flex align-items-center gap-3">
+                                                        <img
+                                                            src={item.thumbnail}
+                                                            alt={item.title}
+                                                            style={{
+                                                                width: "45px",
+                                                                height: "45px",
+                                                                objectFit: "cover",
+                                                                borderRadius: "5px",
+                                                            }}
+                                                        />
+
+                                                        <div>
+                                                            <div className="fw-semibold"> {item.title} </div>
+                                                            <div> ${item.price} </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div className="d-flex align-items-center gap-2">
+                                                        <button
+                                                            className="btn btn-danger btn-sm"
+                                                            onClick={() => decreaseQuantity(item.id)}
+                                                        >
+                                                            -
+                                                        </button>
+
+                                                        <span className="fw-bold"> {item.quantity} </span>
+
+                                                        <button
+                                                            className="btn btn-success btn-sm"
+                                                            onClick={() => increaseQuantity(item.id)}
+                                                        >
+                                                            +
+                                                        </button>
+
+                                                        <button
+                                                            className="btn btn-danger btn-sm"
+                                                            onClick={() => removeFromCart(item.id)}
+                                                        >
+                                                            Delete
+                                                        </button>
+
+                                                    </div>
+
+                                                </li>
+                                            ))
+                                        )
+                                        }
+                                    </ul>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary"> Checkout </button>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
 
                 <div className="products-grid">
@@ -236,7 +340,7 @@ const Cart = () => {
                     }
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
