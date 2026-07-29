@@ -30,7 +30,9 @@ const Cart = () => {
         });
     }, [searchQuery]);
 
+    // ----- Product Categories show function-------
     const productCategories = (prodCate) => {
+        // console.log(prodCate);
         // console.log(prodCate[0].category);
         let productCategoryArray = ['ALL'];
 
@@ -46,12 +48,13 @@ const Cart = () => {
                 productCategoryArray.push(data.category);
             }
         })
-
+        
+        // console.log('ProductCategoryArray', productCategoryArray);
         setCategory(productCategoryArray);
     }
 
     const handleShowCategoryCard = (specificCategory) => {
-        // console.log(specificCategory);
+        console.log(specificCategory);
         setSelectedCategory(specificCategory);
         // setSelectCategory([]);
 
@@ -66,6 +69,7 @@ const Cart = () => {
         setSelectCategory(temp);
     }
 
+    // -------- Add to cart functionality ------- 
     const handleAddToCart = (product) => {
         // console.log('product', product);
 
@@ -92,44 +96,43 @@ const Cart = () => {
         }
     }
 
+    // ---------- quantity shown in the cart button -----------
     function showTotalQuantity() {
         let data = 0;
         for (let i = 0; i < cartItems.length; i++) {
             data += cartItems[i].quantity;
         }
-
         return data;
     }
 
+    // ------- Delete items form the cart -----------
     const removeFromCart = (id) => {
         setCartItems((prevItems) =>
             prevItems.filter((item) => item.id !== id));
     }
 
+    // ------- increase Quantity functionality ------------
     const increaseQuantity = (id) => {
-
         cartItems.map((item, index) => {
-
             if (item.id == id) {
-            cartItems[index].quantity++;
-            setCartItems([...cartItems]);
+                cartItems[index].quantity++;
+                setCartItems([...cartItems]);
             }
         })
     }
 
+    // ------- decrease Quantity functionality ------------
     const decreaseQuantity = (id) => {
         cartItems.map((item, index) => {
 
-            if (item.id == id) {
-            cartItems[index].quantity--;
+            if(item.id == id) {
+                cartItems[index].quantity--;
 
-            if(cartItems[index].quantity === 0)
-            {
-                removeFromCart(id);
-            } else {
-                setCartItems([...cartItems]);
-            }
-            
+                if (cartItems[index].quantity === 0) {
+                    removeFromCart(id);
+                } else {
+                    setCartItems([...cartItems]);
+                }
             }
         })
     }
@@ -335,7 +338,6 @@ const Cart = () => {
                                     )
                                 }
                             </>
-
                         )
                     }
                 </div>
